@@ -69,8 +69,8 @@ const currentPost = computed(() => {
 watchEffect(() => {
   if (currentPost.value) {
     useHead({
-      // 将页面标题变成 "文章标题 - ShaBox"
-      title: `${currentPost.value.title} - ShaBox`,
+      // 将页面标题变成 "文章标题 - 封盒日记"
+      title: `${currentPost.value.title} - 封盒日记`,
       meta: [
         {
           name: 'description',
