@@ -31,7 +31,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_KEY }}
           REMOTE_HOST: ${{ secrets.SERVER_HOST }}
           REMOTE_USER: ${{ secrets.SERVER_USER }}
-          TARGET: /opt/docker/services/shabox-blog/dist/
+          TARGET: /opt/projects/shabox-blog/dist/
           SOURCE: dist/
           EXCLUDE: ".git/,node_modules/"
           SCRIPT_AFTER: |
