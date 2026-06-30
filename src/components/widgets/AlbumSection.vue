@@ -23,7 +23,7 @@
       <img
         v-for="(imgUrl, index) in post.gallery.slice(0, 3)"
         :key="index"
-        :src="getOssThumb(imgUrl, 400)"
+        :src="imgUrl"
         class="stack-img"
         :class="'stack-' + index"
         alt="stack-preview"
@@ -46,7 +46,7 @@
           })
         "
       >
-         <img :src="getOssThumb(imgUrl, 800)" alt="gallery-img" loading="lazy" />
+        <img :src="imgUrl" alt="gallery-img" loading="lazy" />
       </div>
     </div>
   </div>
@@ -54,7 +54,6 @@
 
 <script setup>
 import { ref } from "vue";
-import { getOssThumb } from '@/utils/oss.js' // 👈 引入工具函数
 
 const props = defineProps({
   post: {

@@ -1,11 +1,14 @@
 <!-- # 时光探针小组件 -->
- <template>
+<template>
   <div class="time-probe-card">
     <div class="card-title">时光探针</div>
     <div class="probe-content">
       <div class="probe-item">
         <span>平稳运行</span>
-        <strong>{{ runDays }}天 {{ runHours }}时 {{ runMins }}分 {{ runSecs }}秒</strong>
+        <strong
+          >{{ runDays }}天 {{ runHours }}时 {{ runMins }}分
+          {{ runSecs }}秒</strong
+        >
       </div>
       <div class="probe-item">
         <span>沉淀日志</span>
@@ -20,40 +23,40 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { postData } from '@/data/posts.js' // 直接从仓库调取数据，不麻烦父组件
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useBlogStore } from "@/store/blog.js";
+
+const blogStore = useBlogStore();
 
 // 1. 时光引擎状态
-const runDays = ref(0)
-const runHours = ref(0)
-const runMins = ref(0)
-const runSecs = ref(0)
+const runDays = ref(0);
+const runHours = ref(0);
+const runMins = ref(0);
+const runSecs = ref(0);
 
 // 2. 自动统计文章和标签数量
-const postCount = computed(() => postData.length)
-const tagCount = computed(() => {
-  const tags = postData.map(post => post.tag)
-  return new Set(tags).size
-})
+const postCount = computed(() => blogStore.postCount);
+const tagCount = computed(() => blogStore.tagCount);
 
 // 3. 心跳引擎
-let timer = null
+let timer = null;
 onMounted(() => {
-  const startDate = new Date('2021-09-01T00:00:00').getTime()
+  blogStore.ensurePosts();
+  const startDate = new Date("2021-09-01T00:00:00").getTime();
   timer = setInterval(() => {
-    const now = new Date().getTime()
-    const diff = Math.floor((now - startDate) / 1000)
-    runDays.value = Math.floor(diff / (24 * 3600))
-    runHours.value = Math.floor((diff % (24 * 3600)) / 3600)
-    runMins.value = Math.floor((diff % 3600) / 60)
-    runSecs.value = diff % 60
-  }, 1000)
-})
+    const now = new Date().getTime();
+    const diff = Math.floor((now - startDate) / 1000);
+    runDays.value = Math.floor(diff / (24 * 3600));
+    runHours.value = Math.floor((diff % (24 * 3600)) / 3600);
+    runMins.value = Math.floor((diff % 3600) / 60);
+    runSecs.value = diff % 60;
+  }, 1000);
+});
 
 // 现代前端的极客素养：当组件被销毁时，记得关掉秒表，防止内存泄漏！
 onUnmounted(() => {
-  clearInterval(timer)
-})
+  clearInterval(timer);
+});
 </script>
 
 <style scoped>

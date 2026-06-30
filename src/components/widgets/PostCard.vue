@@ -1,6 +1,7 @@
 <template>
   <div class="card" @click="router.push(`/post/${post.id}`)">
-    <img :src="getOssThumb(post.img, 800)" alt="card-img" />
+    <img v-if="post.img" :src="post.img" alt="card-img" />
+    <div v-else class="card-placeholder"></div>
 
     <div class="cardLeft">
       <h2>{{ post.title }}</h2>
@@ -20,23 +21,24 @@
 
     <div class="cardRight">
       <div class="cardR_copy">
-        <p><span>{{ post.quote }}</span></p>
+        <p>
+          <span>{{ post.quote }}</span>
+        </p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-import { getOssThumb } from '@/utils/oss.js' // 👈 引入工具函数
+import { useRouter } from "vue-router";
 
 defineProps({
   post: { type: Object, required: true },
-  selectedTags: { type: Array, default: () => [] }
-})
-defineEmits(['tagClick'])
+  selectedTags: { type: Array, default: () => [] },
+});
+defineEmits(["tagClick"]);
 
-const router = useRouter()
+const router = useRouter();
 </script>
 
 <style scoped>
@@ -64,6 +66,13 @@ const router = useRouter()
   left: 0;
   transition: all 0.2s ease-out;
 }
+.card-placeholder {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(86, 171, 47, 0.25), rgba(240, 255, 78, 0.18)),
+    var(--article-bg);
+}
 
 .cardLeft {
   position: relative;
@@ -85,13 +94,15 @@ const router = useRouter()
 }
 .cardLeft h2 {
   font-size: 18px;
-   color: var(--text-main);
+  color: var(--text-main);
   text-shadow: 0px 0px 5px var(--bg-card);
   margin-bottom: 5px;
   white-space: nowrap; /* 第一道锁：所有文字绝对不许换行！ */
   overflow: hidden; /* 第二道锁：超出卡片边界的文字，直接斩断隐藏！ */
   text-overflow: ellipsis; /* 第三道锁：在斩断的切口处，优雅地补上“...” */
-  transition: color 0.4s ease, text-shadow 0.4s ease;
+  transition:
+    color 0.4s ease,
+    text-shadow 0.4s ease;
 }
 .cardLeft .date {
   line-height: 20px;
@@ -166,7 +177,7 @@ const router = useRouter()
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   transition: all 0.3s;
-   /* 👇 核心魔法：允许卡片上的副标题也物理换行 */
+  /* 👇 核心魔法：允许卡片上的副标题也物理换行 */
   white-space: pre-line;
 }
 .card:hover .cardR_copy p span {

@@ -1,5 +1,5 @@
 <!-- # 置顶精选小组件 -->
- <template>
+<template>
   <div class="pinned-card-wrapper">
     <div class="card-title">精选记忆</div>
     <div class="pinned-list">
@@ -10,7 +10,8 @@
         @click="router.push(`/post/${post.id}`)"
       >
         <div class="pinned-img">
-          <img :src="getOssSquare (post.img, 100, 100)" alt="cover" />
+          <img v-if="post.img" :src="post.img" alt="cover" />
+          <div v-else class="pinned-placeholder"></div>
         </div>
         <div class="pinned-info">
           <h4>{{ post.title }}</h4>
@@ -22,19 +23,22 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { postData } from '@/data/posts.js' // 直接从仓库调取数据
-import { getOssSquare  } from '@/utils/oss.js' // 👈 引入工具函数
+import { computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useBlogStore } from "@/store/blog.js";
 
-const router = useRouter()
+const router = useRouter();
+const blogStore = useBlogStore();
+
+onMounted(() => {
+  blogStore.ensurePosts();
+});
 
 // 全新魔法：只挑出被你盖了 `pinned: true` 印章的帖子！
 // （后面保留了 .slice(0, 3) 是一道安全锁，防止你以后不小心置顶了 10 篇，导致边栏被撑爆，它永远只展示最新的 3 篇置顶）
 const pinnedPosts = computed(() => {
-  return postData.filter(post => post.pinned).slice(0, 5)
-})
-
+  return blogStore.pinnedPosts;
+});
 </script>
 
 <style scoped>
@@ -74,6 +78,13 @@ const pinnedPosts = computed(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.pinned-placeholder {
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(135deg, rgba(86, 171, 47, 0.25), rgba(240, 255, 78, 0.18)),
+    var(--article-bg);
 }
 .pinned-info h4 {
   font-size: 14px;

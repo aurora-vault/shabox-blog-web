@@ -2,19 +2,17 @@
   <div class="inner">
     <h1 class="visually-hidden">ShaBox - 像素人的个人博客与代码沙盒</h1>
 
-        <MottoHeader />   <!-- 首页用这个 -->
-
-
+    <MottoHeader />
+    <!-- 首页用这个 -->
 
     <div class="home-layout">
-            <SidebarLeft
+      <SidebarLeft
         class="sidebar-left"
         :selectedTags="selectedTags"
         :isMatchAll="isMatchAll"
         @toggle="toggleTag"
         @updateMatchAll="isMatchAll = $event"
       />
-
 
       <div class="main-content">
         <div class="post-grid">
@@ -28,43 +26,48 @@
         </div>
       </div>
 
-
       <SidebarRight class="sidebar-right" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
-import { postData } from "@/data/posts.js"; // 呼叫数据仓库
-import MottoHeader from '@/components/layout/MottoHeader.vue';
-import PostCard from '@/components/widgets/PostCard.vue';
-import { useHead } from '@unhead/vue';
+import { ref, computed, onMounted } from "vue";
+import MottoHeader from "@/components/layout/MottoHeader.vue";
+import PostCard from "@/components/widgets/PostCard.vue";
+import { useHead } from "@unhead/vue";
+import { useBlogStore } from "@/store/blog.js";
 // 动态注入该页面的 SEO 信息
 useHead({
-  title: '沙盒屋',
+  title: "沙盒屋",
   meta: [
     {
-      name: 'description',
-      content: '欢迎来到 Shabox 的个人网站，这里分享前端技术、个人随笔与生活记录。'
-    }
-  ]
-})
+      name: "description",
+      content:
+        "欢迎来到 Shabox 的个人网站，这里分享前端技术、个人随笔与生活记录。",
+    },
+  ],
+});
 
 // 引入左右护法
 import SidebarLeft from "@/components/layout/SidebarLeft.vue";
 import SidebarRight from "@/components/layout/SidebarRight.vue";
 
-const router = useRouter();
+const blogStore = useBlogStore();
 
 // =========================================
 // Home.vue 的核心大脑：掌控数据与联动
 // =========================================
-const postList = ref(postData);
 const selectedTags = ref([]); // 记事本：记下选中的标签
 // 👇 新增魔法：控制交集(AND)还是并集(OR)的开关，默认 false (并集)
 const isMatchAll = ref(false);
+
+onMounted(async () => {
+  await blogStore.ensurePosts();
+  await blogStore.ensureTags();
+});
+
+const postList = computed(() => blogStore.posts);
 
 // 接收左护法传来的信号，修改记事本
 const toggleTag = (tag) => {
@@ -76,8 +79,7 @@ const toggleTag = (tag) => {
   }
 };
 
-
-  // Home.vue 过滤算法优化
+// Home.vue 过滤算法优化
 const filteredPosts = computed(() => {
   const selectedLen = selectedTags.value.length;
   if (selectedLen === 0) return postList.value;
@@ -85,7 +87,7 @@ const filteredPosts = computed(() => {
   // 在闭包外层将选中标签转化为 Set，避免在 filter 循环中重复创建
   const selectedSet = new Set(selectedTags.value);
 
-  return postList.value.filter(post => {
+  return postList.value.filter((post) => {
     let matchCount = 0;
     for (let i = 0; i < post.tag.length; i++) {
       if (selectedSet.has(post.tag[i])) {
@@ -98,7 +100,6 @@ const filteredPosts = computed(() => {
     return isMatchAll.value ? matchCount === selectedLen : false;
   });
 });
-
 </script>
 
 <style scoped>
@@ -140,7 +141,9 @@ const filteredPosts = computed(() => {
 /* 让前两张卡片拥有尊贵金边（利用 Vue 组件在根元素上的穿透特性） */
 .post-grid > :nth-child(1),
 .post-grid > :nth-child(2) {
-  box-shadow: 1px 1px 2px gold, -1px -1px 2px gold;
+  box-shadow:
+    1px 1px 2px gold,
+    -1px -1px 2px gold;
 }
 
 /* 手机端默认：左右护法直接隐身，把 100% 的空间让给卡片瀑布流！ */

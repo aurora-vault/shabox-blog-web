@@ -27,8 +27,8 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { postData } from "@/data/posts.js";
+import { computed, onMounted } from "vue";
+import { useBlogStore } from "@/store/blog.js";
 
 // 1. 接收父组件（Home.vue）传来的“当前选中了哪些标签”的本子
 defineProps({
@@ -41,6 +41,12 @@ defineProps({
 
 // 2. 定义向外发射的信号：当标签被点击时，大喊一声 "toggle"
 defineEmits(["toggle", "updateMatchAll"]); // 👈 新增抛出事件
+const blogStore = useBlogStore();
+
+onMounted(() => {
+  blogStore.ensurePosts();
+  blogStore.ensureTags();
+});
 
 // =========================================
 // 3. 你专属的“置顶标签特权名单”
@@ -56,13 +62,13 @@ pinnedTags.forEach((tag, index) => {
 
 // 4. 提取全站标签，并进行“阶级排序”
 const sortedTags = computed(() => {
-  const allTags = new Set();
-  // 因为现在 tag 是数组，所以要用双重循环提取出来
-  postData.forEach((post) => {
-    post.tag.forEach((t) => allTags.add(t));
-  });
+  const allTags = new Set(
+    blogStore.tags.length > 0
+      ? blogStore.tags.map((tag) => tag.name)
+      : blogStore.posts.flatMap((post) => post.tag || []),
+  );
 
-   return Array.from(allTags).sort((a, b) => {
+  return Array.from(allTags).sort((a, b) => {
     // 使用 in 操作符或直接读取，时间复杂度 O(1)
     const hasA = a in pinnedWeight;
     const hasB = b in pinnedWeight;
@@ -70,7 +76,7 @@ const sortedTags = computed(() => {
     if (hasA && hasB) return pinnedWeight[a] - pinnedWeight[b];
     if (hasA) return -1;
     if (hasB) return 1;
-    return a.localeCompare(b, 'zh-CN'); // 注入 'zh-CN' 保证中文字符按拼音物理顺序排序
+    return a.localeCompare(b, "zh-CN"); // 注入 'zh-CN' 保证中文字符按拼音物理顺序排序
   });
 });
 </script>

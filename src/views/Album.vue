@@ -39,17 +39,22 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import MottoHeader from "@/components/layout/MottoHeader.vue";
 import AlbumSection from "@/components/widgets/AlbumSection.vue"; // 👈 引入新武器
 import Lightbox from "@/components/common/Lightbox.vue"; // 👈 引入暗房
-import { postData } from "@/data/posts.js";
+import { useBlogStore } from "@/store/blog.js";
 
 const albumTabs = ["全部", "摄影", "游戏", "板绘", "创作"];
 const currentTab = ref("全部");
+const blogStore = useBlogStore();
+
+onMounted(() => {
+  blogStore.ensurePosts();
+});
 
 const filteredAlbumPosts = computed(() => {
-  let validPosts = postData.filter(
+  let validPosts = blogStore.albumPosts.filter(
     (post) => post.gallery && post.gallery.length > 0,
   );
   if (currentTab.value !== "全部") {

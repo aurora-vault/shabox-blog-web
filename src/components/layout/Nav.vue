@@ -41,10 +41,9 @@ watch(
     if (isOpen.value) {
       isOpen.value = false;
     }
-  }
+  },
 );
 </script>
-
 
 <style scoped>
 /* nav */
@@ -79,8 +78,7 @@ watch(
   box-shadow:
     5px 5px 0px #5c7b1e,
     -5px -5px 0px #d8ff46; /* 背景图片 */
-  background: url(@/assets/icons/xsr2.svg)
-    no-repeat center;
+  background: url(@/assets/icons/xsr2.svg) no-repeat center;
   background-size: cover; /* 移入变小手 */
   cursor: pointer;
   transition: all 0.4s ease-out;

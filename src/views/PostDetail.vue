@@ -17,16 +17,11 @@
         {{ currentPost.quote }}
       </p>
 
-      <div class="article">
-        <Suspense>
-          <component :is="currentPost.component" />
-          <template #fallback>
-            <p style="text-align: center; color: var(--text-muted)">
-              文章内容正在加载中...
-            </p>
-          </template>
-        </Suspense>
-      </div>
+      <div class="article" v-html="currentPost.contentHtml"></div>
+    </div>
+
+    <div class="content not-found" v-else-if="isLoading">
+      <h1 class="title">文章内容正在加载中...</h1>
     </div>
 
     <div class="content not-found" v-else>
@@ -36,34 +31,33 @@
 </template>
 
 <script setup>
-import { ref, computed, watchEffect } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { postData } from "@/data/posts.js"; // 引入我们昨晚建好的“数据小仓库”
+import { computed, onMounted, watch, watchEffect } from "vue";
+import { useRoute } from "vue-router";
 import MottoHeader from "@/components/layout/MottoHeader.vue";
-import { useHead } from '@unhead/vue'; // 1. 引入新版 Head 管理器
+import { useHead } from "@unhead/vue"; // 1. 引入新版 Head 管理器
+import { useBlogStore } from "@/store/blog.js";
 
 const route = useRoute();
-const router = useRouter();
+const blogStore = useBlogStore();
 
-// 1. 魔法一：从网址里揪出帖子的 ID
-// 比如网址是 /news/1，那 postId 就是 1
-// const postId = Number(route.params.id)
-// 现在改成这样（因为 ID 变成字符串 'first-post' 了）：
-// const postId = route.params.id;
-
-// 2. 魔法二：去小仓库里把这篇帖子找出来
-// PostDetail.vue 脚本修正
 const currentPost = computed(() => {
-  // 每次 route.params 变化时，触发 getter 重新计算
-  return postData.find((post) => post.id === route.params.id);
+  return blogStore.postDetails[route.params.id] || null;
 });
 
-// 3. 魔法三：掌控代码块展开/收起的开关
-// const isCodeExpanded = ref(false)
+const isLoading = computed(() =>
+  Boolean(blogStore.loadingPostIds[route.params.id]),
+);
 
-// const toggleCode = () => {
-//   isCodeExpanded.value = !isCodeExpanded.value
-// }
+async function loadPost() {
+  try {
+    await blogStore.ensurePostDetail(route.params.id);
+  } catch (_error) {
+    // 404 和接口错误由页面状态兜底
+  }
+}
+
+onMounted(loadPost);
+watch(() => route.params.id, loadPost);
 
 // 👇 2. 动态注入 SEO 魔法：监听当前文章数据的变化
 watchEffect(() => {
@@ -73,19 +67,19 @@ watchEffect(() => {
       title: `${currentPost.value.title} - 沙盒屋`,
       meta: [
         {
-          name: 'description',
+          name: "description",
           // 巧妙利用你 Markdown 里的 quote 作为 SEO 的描述摘要
-          content: currentPost.value.quote || '像素人的沙盒屋文章详情'
-        }
+          content: currentPost.value.quote || "像素人的沙盒屋文章详情",
+        },
       ],
       // 👇 新增：防御 URL 参数导致的权重流失
       link: [
         {
-          rel: 'canonical',
+          rel: "canonical",
           // 动态拼接出纯净的绝对路径
-          href: `https://shabox.fun/post/${currentPost.value.id}`
-        }
-      ]
+          href: `https://shabox.fun/post/${currentPost.value.id}`,
+        },
+      ],
     });
   }
 });
