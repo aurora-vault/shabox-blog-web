@@ -2,7 +2,7 @@ name: Deploy shabox-blog
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -33,7 +33,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           source: "dist/*,docker-compose.yml,nginx-conf/default.conf"
-          target: "/opt/projects/shabox-blog"
+          target: "/opt/projects/shabox-blog-ui"
           strip_components: 0
 
       - name: Sync container state
@@ -44,6 +44,6 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           script: |
             set -e
-            cd /opt/projects/shabox-blog
+            cd /opt/projects/shabox-blog-ui
             docker compose up -d
             echo "Deploy complete: $(date '+%Y-%m-%d %H:%M:%S')"

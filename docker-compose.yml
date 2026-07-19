@@ -1,7 +1,7 @@
 services:
   shabox-blog:
     image: nginx:alpine
-    container_name: shabox-blog
+    container_name: shabox-blog-ui
     restart: unless-stopped
     volumes:
       - ./dist:/usr/share/nginx/html:ro
