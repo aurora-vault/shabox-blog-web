@@ -1,4 +1,4 @@
-name: Deploy shabox-blog
+name: Deploy shabox-blog-ui
 
 on:
   push:
@@ -6,44 +6,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    environment: server
-
+  deploy:
+    runs-on: aurora
+    if: github.actor == 'pxMan79'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build
-        run: npm run build
-
-      - name: Deploy site files to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_KEY }}
-          source: "dist/*,docker-compose.yml,nginx-conf/default.conf"
-          target: "/opt/projects/shabox-blog-ui"
-          strip_components: 0
-
-      - name: Sync container state
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_KEY }}
-          script: |
-            set -e
-            cd /opt/projects/shabox-blog-ui
-            docker compose up -d
-            echo "Deploy complete: $(date '+%Y-%m-%d %H:%M:%S')"
+      - name: Sync code
+        run: |
+          set -e
+          cd /opt/projects/shabox-blog-ui
+          git fetch --all --prune
+          git reset --hard origin/main
+      - name: Build dist
+        run: |
+          cd /opt/projects/shabox-blog-ui
+          npm ci
+          npm run build
+      - name: Deploy
+        run: |
+          cd /opt/projects/shabox-blog-ui
+          docker compose up -d
+          docker ps --filter name=shabox-blog-ui
