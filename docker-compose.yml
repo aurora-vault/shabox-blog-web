@@ -1,10 +1,12 @@
+name: shabox-blog-web
+
 services:
-  shabox-blog:
-    image: nginx:alpine
-    container_name: shabox-blog-ui
+  blog-web:
+    build: .
+    image: shabox/blog-web:latest
+    container_name: shabox-blog-web
     restart: unless-stopped
     volumes:
-      - ./dist:/usr/share/nginx/html:ro
       - ./nginx-conf/default.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
       - npm-net

@@ -1,4 +1,4 @@
-name: Deploy shabox-blog-ui
+name: Deploy shabox-blog-web
 
 on:
   push:
@@ -10,19 +10,11 @@ jobs:
     runs-on: aurora
     if: github.actor == 'pxMan79'
     steps:
-      - name: Sync code
+      - name: Sync and deploy
         run: |
           set -e
-          cd /opt/projects/shabox-blog-ui
+          cd /opt/projects/shabox-blog-web
           git fetch --all --prune
           git reset --hard origin/main
-      - name: Build dist
-        run: |
-          cd /opt/projects/shabox-blog-ui
-          npm ci
-          npm run build
-      - name: Deploy
-        run: |
-          cd /opt/projects/shabox-blog-ui
-          docker compose up -d
-          docker ps --filter name=shabox-blog-ui
+          docker compose up -d --build --remove-orphans
+          docker ps --filter name=shabox-blog-web
