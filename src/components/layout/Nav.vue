@@ -2,7 +2,8 @@
   <nav class="nav">
     <div class="navLogo">
       <router-link to="/">
-        <img src="@/assets/icons/LogoA.svg" alt="SHABOX.FUN" />
+        <img class="logoDesktop" src="/og-image.png" alt="SHABOX.FUN" />
+        <img class="logoMobile" src="@/assets/icons/LogoA.svg" alt="SHABOX.FUN" />
       </router-link>
     </div>
 
@@ -64,9 +65,18 @@ watch(
   padding-left: 4%;
   display: flex; /* img居中 */
   align-items: center;
+  overflow: hidden; /* 兜底：防 logo 撑破导航栏 */
 }
 .nav .navLogo img {
-  width: 140px;
+  width: auto;
+  object-fit: contain;
+}
+.nav .navLogo .logoDesktop {
+  display: none; /* 手机默认隐藏 */
+}
+.nav .navLogo .logoMobile {
+  display: block;
+  width: 140px; /* 手机：恢复原 logo 样式 */
 }
 
 /* PE样式 */
@@ -78,7 +88,7 @@ watch(
   box-shadow:
     5px 5px 0px #5c7b1e,
     -5px -5px 0px #d8ff46; /* 背景图片 */
-  background: url(@/assets/icons/xsr2.svg) no-repeat center;
+  background: url(/favicon.svg) no-repeat center;
   background-size: cover; /* 移入变小手 */
   cursor: pointer;
   transition: all 0.4s ease-out;
@@ -149,6 +159,15 @@ watch(
 @media (min-width: 992px) {
   .nav .btn {
     /* 隐藏按钮 */
+    display: none;
+  }
+
+  .nav .navLogo .logoDesktop {
+    display: block;
+    height: 70px; /* 占满导航栏高度（nav=70），严格不溢出 */
+    width: auto;
+  }
+  .nav .navLogo .logoMobile {
     display: none;
   }
 

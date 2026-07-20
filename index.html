@@ -7,10 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- 手机浏览器的顶部状态栏优化 -->
     <meta name="theme-color" content="#0f172a" />
-    <!-- 页签图标 -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <!-- 图标IE兼容 -->
-    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <!-- 页签图标（矢量优先，兼容各平台） -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
     <!-- 网页标题 -->
     <title>沙盒屋</title>
     <!-- SEO 描述 -->
@@ -23,6 +25,17 @@
       name="keywords"
       content="像素人, ShaBox, 个人博客, 前端, 随笔, 沙盒屋"
     />
+    <!-- 社交分享（微信/TG/Twitter 预览图） -->
+    <meta property="og:title" content="沙盒屋" />
+    <meta
+      property="og:description"
+      content="像素人的个人博客，前端、绘画、数码与日常分享的沙盒。"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://shabox.fun/" />
+    <meta property="og:image" content="/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="/og-image.png" />
     <!-- 渲染读取基础样式 -->
     <script>
       (function () {
