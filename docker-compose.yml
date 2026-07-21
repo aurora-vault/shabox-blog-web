@@ -9,7 +9,9 @@ services:
     volumes:
       - ./nginx-conf/default.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
-      - npm-net
+      npm-net:
+        aliases:
+          - shabox-blog-web
     logging:
       driver: "json-file"
       options:
