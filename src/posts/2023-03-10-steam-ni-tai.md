@@ -2,7 +2,7 @@
 title: Steam拟态
 tag: 拟态
 quote: G胖的阴谋...
-img: /posts/230310steam-ni-tai/00.webp
+img: https://img.shabox.fun/posts/230310steam-ni-tai/00.webp
 ---
 
 ### 点击白嫖!
