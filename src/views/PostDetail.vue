@@ -17,7 +17,10 @@
         {{ currentPost.quote }}
       </p>
 
-      <div class="article" v-html="currentPost.contentHtml"></div>
+      <div v-if="labComponent" class="article lab-article">
+        <component :is="labComponent" />
+      </div>
+      <div v-else class="article" v-html="currentPost.contentHtml"></div>
     </div>
 
     <div class="content not-found" v-else-if="isLoading">
@@ -37,12 +40,20 @@ import MottoHeader from "@/components/layout/MottoHeader.vue";
 import { useHead } from "@unhead/vue"; // 1. 引入新版 Head 管理器
 import { useBlogStore } from "@/store/blog.js";
 import { imgUrl, imgSrcset, IMAGE_SIZE } from "@/lib/image.js";
+import { labComponents } from "@/views/lab";
 
 const route = useRoute();
 const blogStore = useBlogStore();
 
 const currentPost = computed(() => {
   return blogStore.postDetails[route.params.id] || null;
+});
+
+// 动效文章:content_markdown 形如 "lab:组件名" → 渲染注册表组件,不走 v-html
+const labComponent = computed(() => {
+  const md = currentPost.value?.contentMarkdown || "";
+  const m = md.trim().match(/^lab:(.+)$/);
+  return m ? labComponents[m[1].trim()] || null : null;
 });
 
 const isLoading = computed(() =>
@@ -82,7 +93,8 @@ function applyImageSizing() {
   });
 }
 watch(currentPost, () => {
-  if (currentPost.value) applyImageSizing();
+  // 动效文章(lab:)由组件自身控制图片,跳过正文分层处理
+  if (currentPost.value && !labComponent.value) applyImageSizing();
 });
 
 // 👇 2. 动态注入 SEO 魔法：监听当前文章数据的变化
