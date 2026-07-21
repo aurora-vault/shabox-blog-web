@@ -5,7 +5,7 @@ import {
 } from "../lib/token.js";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/api";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/v1";
 
 // 共享的 refresh 进行中 promise：并发请求同时 401 时只发一次 refresh
 let refreshing = null;

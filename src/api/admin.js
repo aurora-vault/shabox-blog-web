@@ -2,7 +2,7 @@ import { http } from "./http.js";
 import { getAccessToken } from "../lib/token.js";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/api";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/v1";
 
 // ===== auth =====
 export const adminLogin = (username, password) =>

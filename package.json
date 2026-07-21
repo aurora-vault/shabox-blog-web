@@ -2,7 +2,7 @@
   "name": "shabox-blog-web",
   "version": "0.0.0",
   "private": true,
-  "description": "shabox-pxMan79",
+  "description": "沙盒屋个人博客前端(Vue3 + Vite SSG)",
   "license": "ISC",
   "author": "pxMan79",
   "type": "module",
@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
-    "docker:logs": "docker compose logs -f shabox-blog"
+    "docker:logs": "docker compose logs -f blog-web"
   },
   "dependencies": {
     "@unhead/vue": "^2.1.12",
@@ -39,11 +39,11 @@
   "main": "vite.config.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pxMan79/shabox-blog.git"
+    "url": "git+https://github.com/aurora-vault/shabox-blog-web.git"
   },
   "keywords": [],
   "bugs": {
-    "url": "https://github.com/pxMan79/shabox-blog/issues"
+    "url": "https://github.com/aurora-vault/shabox-blog-web/issues"
   },
-  "homepage": "https://github.com/pxMan79/shabox-blog#readme"
+  "homepage": "https://github.com/aurora-vault/shabox-blog-web#readme"
 }
