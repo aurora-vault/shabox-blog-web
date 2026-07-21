@@ -10,7 +10,7 @@
         @click="router.push(`/post/${post.id}`)"
       >
         <div class="pinned-img">
-          <img v-if="post.img" :src="post.img" alt="cover" />
+          <img v-if="post.img" :src="imgUrl(post.img, IMAGE_SIZE.THUMB)" alt="cover" />
           <div v-else class="pinned-placeholder"></div>
         </div>
         <div class="pinned-info">
@@ -26,6 +26,7 @@
 import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useBlogStore } from "@/store/blog.js";
+import { imgUrl, IMAGE_SIZE } from "@/lib/image.js";
 
 const router = useRouter();
 const blogStore = useBlogStore();

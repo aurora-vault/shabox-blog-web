@@ -21,9 +21,9 @@
       title="点击展开画廊"
     >
       <img
-        v-for="(imgUrl, index) in post.gallery.slice(0, 3)"
+        v-for="(url, index) in post.gallery.slice(0, 3)"
         :key="index"
-        :src="imgUrl"
+        :src="imgUrl(url, IMAGE_SIZE.THUMB)"
         class="stack-img"
         :class="'stack-' + index"
         alt="stack-preview"
@@ -36,7 +36,7 @@
     <div v-else class="masonry-grid">
       <div
         class="masonry-item"
-        v-for="(imgUrl, index) in post.gallery"
+        v-for="(url, index) in post.gallery"
         :key="index"
         @click="
           emit('openLightbox', {
@@ -46,7 +46,7 @@
           })
         "
       >
-        <img :src="imgUrl" alt="gallery-img" loading="lazy" />
+        <img :src="imgUrl(url, IMAGE_SIZE.COVER)" alt="gallery-img" loading="lazy" />
       </div>
     </div>
   </div>
@@ -54,6 +54,7 @@
 
 <script setup>
 import { ref } from "vue";
+import { imgUrl, IMAGE_SIZE } from "@/lib/image.js";
 
 const props = defineProps({
   post: {

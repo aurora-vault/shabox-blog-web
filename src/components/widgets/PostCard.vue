@@ -1,6 +1,6 @@
 <template>
   <div class="card" @click="router.push(`/post/${post.id}`)">
-    <img v-if="post.img" :src="post.img" alt="card-img" />
+    <img v-if="post.img" :src="imgUrl(post.img, IMAGE_SIZE.COVER)" alt="card-img" />
     <div v-else class="card-placeholder"></div>
 
     <div class="cardLeft">
@@ -31,6 +31,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
+import { imgUrl, IMAGE_SIZE } from "@/lib/image.js";
 
 defineProps({
   post: { type: Object, required: true },

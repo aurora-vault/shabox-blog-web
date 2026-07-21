@@ -31,11 +31,12 @@
 </template>
 
 <script setup>
-import { computed, onMounted, watch, watchEffect } from "vue";
+import { computed, onMounted, watch, watchEffect, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import MottoHeader from "@/components/layout/MottoHeader.vue";
 import { useHead } from "@unhead/vue"; // 1. 引入新版 Head 管理器
 import { useBlogStore } from "@/store/blog.js";
+import { imgUrl, imgSrcset, IMAGE_SIZE } from "@/lib/image.js";
 
 const route = useRoute();
 const blogStore = useBlogStore();
@@ -58,6 +59,31 @@ async function loadPost() {
 
 onMounted(loadPost);
 watch(() => route.params.id, loadPost);
+
+// 正文图分层:contentHtml 经 v-html 渲染,img src 是后端存的原图(完整 BOS URL)。
+// 渲染后遍历 .article img,按 CONTENT 档压缩 + 响应式 srcset;原图存 data-original 供查看。
+function applyImageSizing() {
+  if (typeof document === "undefined") return; // SSG 服务端守卫
+  nextTick(() => {
+    const root = document.querySelector(".article");
+    if (!root) return;
+    root.querySelectorAll("img").forEach((img) => {
+      if (img.getAttribute("alt") === "icon") return; // 行内小图标用原图
+      const orig = img.getAttribute("src");
+      if (!orig) return;
+      img.setAttribute("data-original", orig);
+      img.setAttribute("src", imgUrl(orig, IMAGE_SIZE.CONTENT));
+      const ss = imgSrcset(orig, [IMAGE_SIZE.COVER, IMAGE_SIZE.CONTENT]);
+      if (ss) {
+        img.setAttribute("srcset", ss);
+        img.setAttribute("sizes", "(min-width: 768px) 60vw, 100vw");
+      }
+    });
+  });
+}
+watch(currentPost, () => {
+  if (currentPost.value) applyImageSizing();
+});
 
 // 👇 2. 动态注入 SEO 魔法：监听当前文章数据的变化
 watchEffect(() => {
@@ -227,6 +253,15 @@ watchEffect(() => {
   margin: 15px auto 5px auto;
   box-shadow: 0 4px 8px var(--card-shadow);
   transition: box-shadow 0.4s ease;
+}
+/* 相册容器:替代清洗前被 sanitize 剥掉的 <div style="flex..."> */
+.article :deep(.post-gallery) {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.article :deep(.post-gallery img) {
+  margin: 0; /* 容器内由 gap 控制间距,取消单图外边距 */
 }
 /* 现代魔法：精准打击“包裹着图片的 p 标签” */
 .article :deep(p:has(img)) {
