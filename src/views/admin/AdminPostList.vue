@@ -55,6 +55,16 @@
           <el-button v-else link type="warning" @click="unpublish(row)"
             >撤回</el-button
           >
+          <el-button
+            v-if="row.pinned"
+            link
+            type="primary"
+            @click="unpin(row)"
+            >取消置顶</el-button
+          >
+          <el-button v-else link type="primary" @click="pin(row)"
+            >置顶</el-button
+          >
           <el-popconfirm title="删除该文章？" @confirm="remove(row)">
             <template #reference>
               <el-button link type="danger">删除</el-button>
@@ -76,6 +86,8 @@ import {
   adminDeletePost,
   adminPublishPost,
   adminUnpublishPost,
+  adminPinPost,
+  adminUnpinPost,
 } from "@/api/admin.js";
 
 const router = useRouter();
@@ -107,6 +119,18 @@ async function publish(row) {
 async function unpublish(row) {
   await adminUnpublishPost(row.id);
   ElMessage.success("已撤回");
+  load();
+}
+
+async function pin(row) {
+  await adminPinPost(row.id);
+  ElMessage.success("已置顶");
+  load();
+}
+
+async function unpin(row) {
+  await adminUnpinPost(row.id);
+  ElMessage.success("已取消置顶");
   load();
 }
 

@@ -47,6 +47,12 @@ export const adminPublishPost = (id) =>
 export const adminUnpublishPost = (id) =>
   http(`/blog/admin/posts/${id}/unpublish`, { method: "POST" });
 
+export const adminPinPost = (id) =>
+  http(`/blog/admin/posts/${id}/pin`, { method: "POST" });
+
+export const adminUnpinPost = (id) =>
+  http(`/blog/admin/posts/${id}/unpin`, { method: "POST" });
+
 // ===== tags =====
 export const adminFetchTags = () => http("/blog/admin/tags");
 
