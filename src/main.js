@@ -7,6 +7,7 @@ import "prismjs/themes/prism-tomorrow.css"; // 经典的暗色极客代码主题
 import "@/assets/reset.css";
 import "@/assets/index.css";
 import { useAdminStore } from "@/store/admin.js";
+import { useUserStore } from "@/store/user.js";
 
 export const createApp = ViteSSG(App, { routes }, ({ app, router }) => {
   // 每次 SSG 渲染或客户端水合（Hydration）时，生成独立的 Pinia 实例，避免跨请求状态污染
@@ -15,8 +16,16 @@ export const createApp = ViteSSG(App, { routes }, ({ app, router }) => {
   // 这样所有的 <template> 都能直接认识并使用 __CDN__ 了！
   app.config.globalProperties.__CDN__ = __CDN__;
 
-  // admin 路由鉴权守卫：未登录访问 /admin/* → 跳登录页
+  // 访客账户守卫：仅 /account/profile 需登录态
   router.beforeEach(async (to) => {
+    if (to.path === "/account/profile") {
+      const userStore = useUserStore();
+      if (!userStore.isAuthed) await userStore.fetchMe();
+      return userStore.isAuthed
+        ? true
+        : "/account/login?redirect=/account/profile";
+    }
+    // admin 路由鉴权守卫：未登录访问 /admin/* → 跳登录页
     if (!to.path.startsWith("/admin")) return true;
     const admin = useAdminStore();
     if (to.path === "/admin/login") {

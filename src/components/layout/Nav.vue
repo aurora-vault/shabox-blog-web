@@ -21,17 +21,56 @@
       <router-link :to="{ name: 'Home' }">首页</router-link>
       <router-link :to="{ name: 'Album' }">相册</router-link>
       <router-link :to="{ path: '/about' }">关于我</router-link>
+      <router-link
+        v-if="!userStore.isAuthed"
+        :to="{ path: '/account/login' }"
+        class="account-link"
+        >登录</router-link
+      >
+      <template v-else>
+        <router-link :to="{ path: '/account/profile' }" class="account-link">{{
+          displayName
+        }}</router-link>
+        <a
+          href="javascript:void(0)"
+          class="account-link"
+          @click="onLogout"
+          >退出</a
+        >
+      </template>
     </div>
   </nav>
 </template>
 
 <script lang="ts" setup>
-// 注意：ref, watch, useRoute 均已被 unplugin-auto-import 注入全局上下文，无需手动 import
+// 注意：ref, watch, useRoute, computed, onMounted 均已被 unplugin-auto-import 注入全局上下文，无需手动 import
+import { useUserStore } from "@/store/user.js";
+
 const isOpen = ref(false);
 const route = useRoute();
+const userStore = useUserStore();
+
+const displayName = computed(() => {
+  const u = userStore.user;
+  return (
+    (u?.displayName as string) ||
+    (u?.email ? (u.email as string).split("@")[0] : "") ||
+    "我的"
+  );
+});
 
 const toggleMenu = () => {
   isOpen.value = !isOpen.value;
+};
+
+// 客户端 hydration 后恢复访客登录态（SSG 期不触发）
+onMounted(() => {
+  userStore.fetchMe();
+});
+
+const onLogout = async () => {
+  await userStore.logout();
+  isOpen.value = false;
 };
 
 // 核心防御机制：侦听路由 VNode 树的变化
