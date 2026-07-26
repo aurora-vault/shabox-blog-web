@@ -1,6 +1,10 @@
 <template>
-  <div class="card" @click="router.push(`/post/${post.id}`)">
-    <img v-if="post.img" :src="imgUrl(post.img, IMAGE_SIZE.COVER)" alt="card-img" />
+  <router-link class="card" :to="`/post/${post.id}`">
+    <img
+      v-if="post.img"
+      :src="imgUrl(post.img, IMAGE_SIZE.COVER)"
+      alt="card-img"
+    />
     <div v-else class="card-placeholder"></div>
 
     <div class="cardLeft">
@@ -26,11 +30,10 @@
         </p>
       </div>
     </div>
-  </div>
+  </router-link>
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
 import { imgUrl, IMAGE_SIZE } from "@/lib/image.js";
 
 defineProps({
@@ -38,13 +41,14 @@ defineProps({
   selectedTags: { type: Array, default: () => [] },
 });
 defineEmits(["tagClick"]);
-
-const router = useRouter();
 </script>
 
 <style scoped>
 /* 把 Home.vue 里所有跟 .card 相关的 CSS 全部搬到这里来！ */
 .card {
+  display: block; /* router-link 渲染 <a>,默认 inline → 改 block 撑满 */
+  text-decoration: none; /* 去掉 <a> 默认下划线 */
+  color: inherit; /* 不用 <a> 默认蓝色,继承正文色 */
   position: relative;
   border-radius: 10px;
   overflow: hidden;
