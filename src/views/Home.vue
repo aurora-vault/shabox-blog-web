@@ -66,10 +66,8 @@ onMounted(async () => {
 
 // SSG 预取:onMounted 在 SSR 不跑,onServerPrefetch 是 SSR 必等的钩子
 onServerPrefetch(async () => {
-  console.log("[ssg-debug] Home onServerPrefetch start");
   await blogStore.ensurePosts();
   await blogStore.ensureTags();
-  console.log("[ssg-debug] Home onServerPrefetch done posts=", blogStore.posts.length);
 });
 
 const postList = computed(() => blogStore.posts);
@@ -87,7 +85,6 @@ const toggleTag = (tag) => {
 // Home.vue 过滤算法优化
 const filteredPosts = computed(() => {
   const selectedLen = selectedTags.value.length;
-  console.log("[ssg-debug] filteredPosts compute posts=", postList.value.length, "selectedLen=", selectedLen);
   if (selectedLen === 0) return postList.value;
 
   // 在闭包外层将选中标签转化为 Set，避免在 filter 循环中重复创建
