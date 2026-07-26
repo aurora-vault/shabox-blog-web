@@ -66,8 +66,10 @@ onMounted(async () => {
 
 // SSG 预取:onMounted 在 SSR 不跑,onServerPrefetch 是 SSR 必等的钩子
 onServerPrefetch(async () => {
+  console.log("[ssg-debug] Home onServerPrefetch start");
   await blogStore.ensurePosts();
   await blogStore.ensureTags();
+  console.log("[ssg-debug] Home onServerPrefetch done posts=", blogStore.posts.length);
 });
 
 const postList = computed(() => blogStore.posts);

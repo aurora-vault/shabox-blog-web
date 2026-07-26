@@ -40,8 +40,10 @@ export const useBlogStore = defineStore("blog", {
 
       try {
         const data = await fetchPosts({ pageSize: 100 });
+        console.log("[ssg-debug] ensurePosts items=", data?.items?.length, "keys=", Object.keys(data || {}));
         this.posts = data.items || [];
       } catch (error) {
+        console.log("[ssg-debug] ensurePosts FAILED:", error.message);
         this.error = error.message || "加载文章失败";
       } finally {
         this.loadingPosts = false;
@@ -68,6 +70,7 @@ export const useBlogStore = defineStore("blog", {
 
       try {
         const post = await fetchPostDetail(slug);
+        console.log("[ssg-debug] ensurePostDetail", slug, "title=", post?.title);
         this.postDetails = {
           ...this.postDetails,
           [slug]: post,
