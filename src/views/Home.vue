@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, onServerPrefetch } from "vue";
 import PageFrame from "@/components/layout/PageFrame.vue";
 import PostCard from "@/components/widgets/PostCard.vue";
 import { useHead } from "@unhead/vue";
@@ -60,6 +60,12 @@ const selectedTags = ref([]); // 记事本：记下选中的标签
 const isMatchAll = ref(false);
 
 onMounted(async () => {
+  await blogStore.ensurePosts();
+  await blogStore.ensureTags();
+});
+
+// SSG 预取:onMounted 在 SSR 不跑,onServerPrefetch 是 SSR 必等的钩子
+onServerPrefetch(async () => {
   await blogStore.ensurePosts();
   await blogStore.ensureTags();
 });
