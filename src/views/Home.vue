@@ -87,6 +87,7 @@ const toggleTag = (tag) => {
 // Home.vue 过滤算法优化
 const filteredPosts = computed(() => {
   const selectedLen = selectedTags.value.length;
+  console.log("[ssg-debug] filteredPosts compute posts=", postList.value.length, "selectedLen=", selectedLen);
   if (selectedLen === 0) return postList.value;
 
   // 在闭包外层将选中标签转化为 Set，避免在 filter 循环中重复创建
