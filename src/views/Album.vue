@@ -37,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onServerPrefetch } from "vue";
+import { ref, computed, onMounted } from "vue";
 import PageFrame from "@/components/layout/PageFrame.vue";
 import AlbumSection from "@/components/widgets/AlbumSection.vue"; // 👈 引入新武器
 import Lightbox from "@/components/common/Lightbox.vue"; // 👈 引入暗房
@@ -49,11 +49,6 @@ const blogStore = useBlogStore();
 
 onMounted(() => {
   blogStore.ensurePosts();
-});
-
-// SSG 预取:onMounted 在 SSR 不跑,onServerPrefetch 是 SSR 必等的钩子
-onServerPrefetch(async () => {
-  await blogStore.ensurePosts();
 });
 
 const filteredAlbumPosts = computed(() => {
