@@ -1,9 +1,6 @@
 <template>
-  <div class="inner">
+  <PageFrame :showBack="false">
     <h1 class="visually-hidden">ShaBox - 像素人的个人博客与代码沙盒</h1>
-
-    <MottoHeader />
-    <!-- 首页用这个 -->
 
     <div class="home-layout">
       <SidebarLeft
@@ -28,12 +25,12 @@
 
       <SidebarRight class="sidebar-right" />
     </div>
-  </div>
+  </PageFrame>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import MottoHeader from "@/components/layout/MottoHeader.vue";
+import PageFrame from "@/components/layout/PageFrame.vue";
 import PostCard from "@/components/widgets/PostCard.vue";
 import { useHead } from "@unhead/vue";
 import { useBlogStore } from "@/store/blog.js";

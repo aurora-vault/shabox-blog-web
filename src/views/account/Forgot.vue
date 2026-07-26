@@ -1,7 +1,7 @@
 <template>
-  <div class="auth-page">
-    <el-card>
-      <h2>忘记密码</h2>
+  <PageFrame>
+    <h1 class="visually-hidden">找回密码</h1>
+    <AuthPanel title="忘记密码">
       <el-form label-position="top" @submit.prevent="onSend">
         <el-form-item label="注册邮箱">
           <el-input
@@ -13,7 +13,7 @@
         </el-form-item>
         <el-button
           type="primary"
-          :disabled="counting > 0 || sending"
+          :disabled="counting > 0 || sending || !form.email.trim()"
           :loading="sending"
           native-type="submit"
           style="width: 100%"
@@ -21,18 +21,22 @@
           {{ counting > 0 ? `${counting}s 后可重发` : "发送重置验证码" }}
         </el-button>
       </el-form>
-      <p v-if="info" class="info">{{ info }}</p>
-      <p v-if="error" class="err">{{ error }}</p>
-      <div class="links">
-        <router-link to="/account/reset">已收到码？去重置</router-link>
+
+      <p v-if="info" class="auth-info">{{ info }}</p>
+      <p v-if="error" class="auth-err">{{ error }}</p>
+      <div class="auth-links">
+        <router-link to="/account/reset">已收到码?去重置</router-link>
         <router-link to="/account/login">返回登录</router-link>
       </div>
-    </el-card>
-  </div>
+    </AuthPanel>
+  </PageFrame>
 </template>
 
 <script setup>
+import "./auth-form.css";
 import { onUnmounted, reactive, ref } from "vue";
+import PageFrame from "@/components/layout/PageFrame.vue";
+import AuthPanel from "@/components/widgets/AuthPanel.vue";
 
 import { useUserStore } from "@/store/user.js";
 
@@ -68,7 +72,7 @@ async function onSend() {
   sending.value = true;
   try {
     await userStore.forgot(form.email.trim());
-    info.value = "若该邮箱已注册，重置验证码已发送，请查收（含垃圾箱）";
+    info.value = "若该邮箱已注册,重置验证码已发送,请查收(含垃圾箱)";
     startCountdown();
   } catch (err) {
     error.value = err.message || "发送失败";
@@ -77,42 +81,3 @@ async function onSend() {
   }
 }
 </script>
-
-<style scoped>
-.auth-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f7fa;
-}
-.auth-page .el-card {
-  width: 360px;
-}
-h2 {
-  text-align: center;
-  margin: 0 0 16px;
-}
-.err {
-  color: #f56c6c;
-  margin: 8px 0 0;
-  font-size: 13px;
-  text-align: center;
-}
-.info {
-  color: #67c23a;
-  margin: 8px 0 0;
-  font-size: 13px;
-  text-align: center;
-}
-.links {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-  font-size: 13px;
-}
-.links a {
-  color: #2563eb;
-  text-decoration: none;
-}
-</style>

@@ -3,7 +3,11 @@
     <div class="navLogo">
       <router-link to="/">
         <img class="logoDesktop" src="/og-image.png" alt="SHABOX.FUN" />
-        <img class="logoMobile" src="@/assets/icons/LogoA.svg" alt="SHABOX.FUN" />
+        <img
+          class="logoMobile"
+          src="@/assets/icons/LogoA.svg"
+          alt="SHABOX.FUN"
+        />
       </router-link>
     </div>
 
@@ -27,22 +31,17 @@
         class="account-link"
         >登录</router-link
       >
-      <template v-else>
-        <router-link :to="{ path: '/account/profile' }" class="account-link">{{
-          displayName
-        }}</router-link>
-        <a
-          href="javascript:void(0)"
-          class="account-link"
-          @click="onLogout"
-          >退出</a
-        >
-      </template>
+      <router-link
+        v-else
+        :to="{ path: '/account/profile' }"
+        class="account-link"
+        >{{ displayName }}</router-link
+      >
     </div>
   </nav>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 // 注意：ref, watch, useRoute, computed, onMounted 均已被 unplugin-auto-import 注入全局上下文，无需手动 import
 import { useUserStore } from "@/store/user.js";
 
@@ -52,11 +51,7 @@ const userStore = useUserStore();
 
 const displayName = computed(() => {
   const u = userStore.user;
-  return (
-    (u?.displayName as string) ||
-    (u?.email ? (u.email as string).split("@")[0] : "") ||
-    "我的"
-  );
+  return u?.displayName || (u?.email ? u.email.split("@")[0] : "") || "我的";
 });
 
 const toggleMenu = () => {
@@ -67,11 +62,6 @@ const toggleMenu = () => {
 onMounted(() => {
   userStore.fetchMe();
 });
-
-const onLogout = async () => {
-  await userStore.logout();
-  isOpen.value = false;
-};
 
 // 核心防御机制：侦听路由 VNode 树的变化
 // 无论用户是点击链接，还是按浏览器的“后退”按钮，只要 URL 路径发生改变，强制剥离激活状态

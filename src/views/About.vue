@@ -1,11 +1,6 @@
 <template>
-  <div class="inner">
+  <PageFrame mottoDark="🌙 宁静致远" mottoLight="☀️ 不忘初心">
     <h1 class="visually-hidden">ShaBox - 像素人的个人博客与代码沙盒</h1>
-    <MottoHeader
-      :showBack="true"
-      darkText="🌙 宁静致远"
-      lightText="☀️ 不忘初心"
-    />
 
     <div class="about-layout">
       <ProfileCard class="side-card area-profile" />
@@ -64,12 +59,12 @@
 
       <UpdateLog class="side-card area-log" />
     </div>
-  </div>
+  </PageFrame>
 </template>
 
 <script setup>
 import { useRouter } from "vue-router";
-import MottoHeader from "@/components/layout/MottoHeader.vue";
+import PageFrame from "@/components/layout/PageFrame.vue";
 import ProfileCard from "@/components/widgets/ProfileCard.vue";
 import TimeProbe from "@/components/widgets/TimeProbe.vue";
 import QuoteCard from "@/components/widgets/QuoteCard.vue";

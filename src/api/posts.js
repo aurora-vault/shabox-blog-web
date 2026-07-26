@@ -1,4 +1,4 @@
-import { http } from "./http.js";
+import { publicHttp } from "./http.js";
 
 export async function fetchPosts(params = {}) {
   const search = new URLSearchParams();
@@ -10,13 +10,13 @@ export async function fetchPosts(params = {}) {
   });
 
   const suffix = search.toString() ? `?${search}` : "";
-  return http(`/blog/posts${suffix}`);
+  return publicHttp(`/blog/posts${suffix}`); // http → publicHttp
 }
 
 export async function fetchPostDetail(slug) {
-  return http(`/blog/posts/${slug}`);
+  return publicHttp(`/blog/posts/${slug}`); // http → publicHttp
 }
 
 export async function fetchTags() {
-  return http("/blog/tags");
+  return publicHttp("/blog/tags"); // http → publicHttp
 }

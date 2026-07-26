@@ -256,9 +256,13 @@ const closeFullscreen = () => {
   animation: line linear infinite; /* 简写属性更干净 */
 }
 @keyframes line {
-  from { transform: translateY(0); }
+  from {
+    transform: translateY(0);
+  }
   /* 强制向下位移 150 个屏幕高度单位，配合 overflow: hidden 完美消失 */
-  to { transform: translateY(150vh); }
+  to {
+    transform: translateY(150vh);
+  }
 }
 
 /* =======================================================

@@ -1,4 +1,8 @@
-import { clearAccessToken, getAccessToken, setAccessToken } from "../lib/token.js";
+import {
+  clearAccessToken,
+  getAccessToken,
+  setAccessToken,
+} from "../lib/token.js";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/v1";
@@ -85,3 +89,24 @@ export const http = createHttp({
   clearAccessToken,
   refreshPath: "/auth/refresh",
 });
+
+export async function publicHttp(path, options = {}) {
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {}),
+  };
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...options,
+    headers,
+  });
+  const contentType = response.headers.get("content-type") || "";
+  const data = contentType.includes("application/json")
+    ? await response.json()
+    : await response.text();
+  if (!response.ok) {
+    const message =
+      typeof data === "object" && data?.message ? data.message : "请求失败";
+    throw new Error(message);
+  }
+  return data;
+}

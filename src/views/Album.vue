@@ -1,8 +1,6 @@
 <template>
-  <div class="inner">
+  <PageFrame>
     <h1 class="visually-hidden">ShaBox - 像素人的相册与画廊</h1>
-    <MottoHeader :showBack="true" />
-
     <div class="album-tabs">
       <span
         v-for="tab in albumTabs"
@@ -35,12 +33,12 @@
       :postId="lightboxData.postId"
       @close="lightboxData.show = false"
     />
-  </div>
+  </PageFrame>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import MottoHeader from "@/components/layout/MottoHeader.vue";
+import PageFrame from "@/components/layout/PageFrame.vue";
 import AlbumSection from "@/components/widgets/AlbumSection.vue"; // 👈 引入新武器
 import Lightbox from "@/components/common/Lightbox.vue"; // 👈 引入暗房
 import { useBlogStore } from "@/store/blog.js";

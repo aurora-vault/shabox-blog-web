@@ -1,15 +1,7 @@
 <template>
-  <div class="inner">
-    <MottoHeader
-      :showBack="true"
-      darkText="🌙 月光入梦"
-      lightText="☀️ 日暮浅眠"
-    />
-
+  <PageFrame mottoDark="🌙 月光入梦" mottoLight="☀️ 日暮浅眠">
     <div class="content" v-if="currentPost">
-      <h1 class="title">
-        {{ currentPost.title }}
-      </h1>
+      <h1 class="title">{{ currentPost.title }}</h1>
       <p class="date">
         {{ currentPost.date }}
       </p>
@@ -28,15 +20,15 @@
     </div>
 
     <div class="content not-found" v-else>
-      <h1 class="title">哎呀，找不到这篇帖子了...</h1>
+      <h1 class="title">哎呀,找不到这篇帖子了...</h1>
     </div>
-  </div>
+  </PageFrame>
 </template>
 
 <script setup>
 import { computed, onMounted, watch, watchEffect, nextTick } from "vue";
 import { useRoute } from "vue-router";
-import MottoHeader from "@/components/layout/MottoHeader.vue";
+import PageFrame from "@/components/layout/PageFrame.vue";
 import { useHead } from "@unhead/vue"; // 1. 引入新版 Head 管理器
 import { useBlogStore } from "@/store/blog.js";
 import { imgUrl, imgSrcset, IMAGE_SIZE } from "@/lib/image.js";

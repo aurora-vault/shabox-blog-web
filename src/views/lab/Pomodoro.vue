@@ -1,6 +1,6 @@
 <template>
-  <div class="inner">
-    <MottoHeader text="代码实验室" :showBack="true" />
+  <PageFrame>
+    <h1 class="visually-hidden">代码实验室</h1>
 
     <div class="lab-container">
       <div class="pomodoro-card" :class="{ 'rest-mode': !isWorkMode }">
@@ -18,12 +18,12 @@
         </div>
       </div>
     </div>
-  </div>
+  </PageFrame>
 </template>
 
 <script setup>
 import { ref, onUnmounted } from "vue";
-import MottoHeader from "@/components/layout/MottoHeader.vue";
+import PageFrame from "@/components/layout/PageFrame.vue";
 
 // === 核心状态库 ===
 const WORK_TIME = 25 * 60; // 25分钟 = 1500秒
@@ -54,31 +54,32 @@ const formatTime = (totalSeconds) => {
 const toggleTimer = () => {
   if (isRunning.value) {
     // 暂停逻辑
-    isRunning.value = false
-    clearInterval(timerId)
+    isRunning.value = false;
+    clearInterval(timerId);
   } else {
     // 开始倒计时逻辑
-    isRunning.value = true
+    isRunning.value = true;
     timerId = setInterval(() => {
-      timeLeft.value-- // 时间流逝
+      timeLeft.value--; // 时间流逝
 
       // 到了 0 的极限判定
       if (timeLeft.value <= 0) {
-        clearInterval(timerId) // 停下秒表
-        isRunning.value = false // 状态归位
+        clearInterval(timerId); // 停下秒表
+        isRunning.value = false; // 状态归位
 
         // 翻转模式
-        isWorkMode.value = !isWorkMode.value
+        isWorkMode.value = !isWorkMode.value;
         // 根据新模式重置时间
-        timeLeft.value = isWorkMode.value ? WORK_TIME : REST_TIME
+        timeLeft.value = isWorkMode.value ? WORK_TIME : REST_TIME;
 
         // 极其简单的浏览器原生提醒
-        alert(isWorkMode.value ? '休息结束，该干活了！' : '专注完成，去喝杯水吧！')
+        alert(
+          isWorkMode.value ? "休息结束，该干活了！" : "专注完成，去喝杯水吧！",
+        );
       }
-    }, 1000)
+    }, 1000);
   }
-}
-
+};
 
 // === 重置引擎 ===
 const resetTimer = () => {

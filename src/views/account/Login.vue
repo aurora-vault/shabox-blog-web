@@ -1,7 +1,7 @@
 <template>
-  <div class="auth-page">
-    <el-card>
-      <h2>登录沙盒屋</h2>
+  <PageFrame>
+    <h1 class="visually-hidden">登录沙盒屋</h1>
+    <AuthPanel title="登录">
       <el-form label-position="top" @submit.prevent="onSubmit">
         <el-form-item label="邮箱">
           <el-input
@@ -19,20 +19,30 @@
             autocomplete="current-password"
           />
         </el-form-item>
-        <el-button type="primary" :loading="loading" native-type="submit" style="width: 100%">登录</el-button>
+        <el-button
+          type="primary"
+          :loading="loading"
+          :disabled="!form.email.trim() || !form.password"
+          native-type="submit"
+          style="width: 100%"
+        >登录</el-button>
       </el-form>
-      <p v-if="error" class="err">{{ error }}</p>
-      <div class="links">
-        <router-link to="/account/register">没有账户？注册</router-link>
+
+      <p v-if="error" class="auth-err">{{ error }}</p>
+      <div class="auth-links">
+        <router-link to="/account/register">没有账户?注册</router-link>
         <router-link to="/account/forgot">忘记密码</router-link>
       </div>
-    </el-card>
-  </div>
+    </AuthPanel>
+  </PageFrame>
 </template>
 
 <script setup>
+import "./auth-form.css";
 import { reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import PageFrame from "@/components/layout/PageFrame.vue";
+import AuthPanel from "@/components/widgets/AuthPanel.vue";
 
 import { useUserStore } from "@/store/user.js";
 
@@ -56,36 +66,3 @@ async function onSubmit() {
   }
 }
 </script>
-
-<style scoped>
-.auth-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f7fa;
-}
-.auth-page .el-card {
-  width: 360px;
-}
-h2 {
-  text-align: center;
-  margin: 0 0 16px;
-}
-.err {
-  color: #f56c6c;
-  margin: 8px 0 0;
-  font-size: 13px;
-  text-align: center;
-}
-.links {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-  font-size: 13px;
-}
-.links a {
-  color: #2563eb;
-  text-decoration: none;
-}
-</style>

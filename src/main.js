@@ -8,32 +8,60 @@ import "@/assets/reset.css";
 import "@/assets/index.css";
 import { useAdminStore } from "@/store/admin.js";
 import { useUserStore } from "@/store/user.js";
+import { useBlogStore } from "@/store/blog.js"; // ← 新增 import
 
-export const createApp = ViteSSG(App, { routes }, ({ app, router }) => {
-  // 每次 SSG 渲染或客户端水合（Hydration）时，生成独立的 Pinia 实例，避免跨请求状态污染
-  app.use(createPinia());
-  // 👇 新增魔法：将 Vite 编译期的常量，强行注入到 Vue 模板的全局渲染上下文中
-  // 这样所有的 <template> 都能直接认识并使用 __CDN__ 了！
-  app.config.globalProperties.__CDN__ = __CDN__;
+export const createApp = ViteSSG(
+  App,
+  { routes },
+  ({ app, router, initialState }) => {
+    // ← 取 initialState
+    const pinia = createPinia();
+    app.use(pinia);
 
-  // 访客账户守卫：仅 /account/profile 需登录态
-  router.beforeEach(async (to) => {
-    if (to.path === "/account/profile") {
-      const userStore = useUserStore();
-      if (!userStore.isAuthed) await userStore.fetchMe();
-      return userStore.isAuthed
-        ? true
-        : "/account/login?redirect=/account/profile";
+    // SSG 写入 / 客户端恢复 Pinia 状态(让预取的数据序列化进 HTML)
+    if (import.meta.env.SSR) {
+      initialState.pinia = pinia.state.value;
+    } else if (initialState.pinia) {
+      pinia.state.value = initialState.pinia;
     }
-    // admin 路由鉴权守卫：未登录访问 /admin/* → 跳登录页
-    if (!to.path.startsWith("/admin")) return true;
-    const admin = useAdminStore();
-    if (to.path === "/admin/login") {
-      return admin.isAuthed ? "/admin/posts" : true;
-    }
-    if (!admin.isAuthed) {
-      await admin.fetchMe();
-    }
-    return admin.isAuthed ? true : "/admin/login";
-  });
-});
+
+    app.config.globalProperties.__CDN__ = __CDN__;
+
+    router.beforeEach(async (to) => {
+      const blog = useBlogStore(pinia);
+
+      // 列表页(首页 / 相册)依赖 posts + tags —— SSG 预渲染时也预取
+      if (to.name === "Home" || to.name === "Album") {
+        await Promise.all([blog.ensurePosts(), blog.ensureTags()]).catch(
+          () => {},
+        );
+      }
+
+      // 文章详情 —— SSG 预渲染每篇 /post/<slug> 时预取(store 守卫防重复)
+      if (to.name === "PostDetail") {
+        const slug = to.params.id;
+        if (slug && !blog.postDetails[slug]) {
+          await blog.ensurePostDetail(slug).catch(() => {});
+        }
+      }
+
+      // ↓↓↓ 原有鉴权,原样保留 ↓↓↓
+      if (to.path === "/account/profile") {
+        const userStore = useUserStore();
+        if (!userStore.isAuthed) await userStore.fetchMe();
+        return userStore.isAuthed
+          ? true
+          : "/account/login?redirect=/account/profile";
+      }
+      if (!to.path.startsWith("/admin")) return true;
+      const admin = useAdminStore();
+      if (to.path === "/admin/login") {
+        return admin.isAuthed ? "/admin/posts" : true;
+      }
+      if (!admin.isAuthed) {
+        await admin.fetchMe();
+      }
+      return admin.isAuthed ? true : "/admin/login";
+    });
+  },
+);
