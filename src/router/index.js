@@ -28,30 +28,15 @@ export const routes = [
     component: () => import("@/views/lab/Pomodoro.vue"),
   },
 
-  // ===== 访客账户（SSG 不预渲染，客户端鉴权）=====
+  // ===== 访客账户 =====
   {
-    path: "/account/login",
-    name: "AccountLogin",
-    component: () => import("@/views/account/Login.vue"),
+    path: "/account",
+    name: "Account",
+    component: () => import("@/views/Account.vue"),
   },
   {
-    path: "/account/register",
-    name: "AccountRegister",
-    component: () => import("@/views/account/Register.vue"),
-  },
-  {
-    path: "/account/forgot",
-    name: "AccountForgot",
-    component: () => import("@/views/account/Forgot.vue"),
-  },
-  {
-    path: "/account/reset",
-    name: "AccountReset",
-    component: () => import("@/views/account/Reset.vue"),
-  },
-  {
-    path: "/account/profile",
+    path: "/profile",
     name: "AccountProfile",
-    component: () => import("@/views/account/Profile.vue"),
+    component: () => import("@/views/Profile.vue"),
   },
 ];

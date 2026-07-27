@@ -27,13 +27,13 @@
       <router-link :to="{ path: '/about' }">关于我</router-link>
       <router-link
         v-if="!userStore.isAuthed"
-        :to="{ path: '/account/login' }"
+        :to="{ path: '/account', query: { mode: 'login' } }"
         class="account-link"
         >登录</router-link
       >
       <router-link
         v-else
-        :to="{ path: '/account/profile' }"
+        :to="{ path: '/profile' }"
         class="account-link"
         >{{ displayName }}</router-link
       >

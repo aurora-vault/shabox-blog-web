@@ -35,3 +35,6 @@ export const accountForgot = (email) => post("/account/forgot", { email });
 // 重置密码
 export const accountReset = ({ email, code, newPassword }) =>
   post("/account/reset", { email, code, newPassword });
+
+export const accountUpdateMe = (payload) =>
+  userHttp("/account/me", { method: "PATCH", body: JSON.stringify(payload || {}) });

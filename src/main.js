@@ -45,12 +45,15 @@ export const createApp = ViteSSG(
       }
 
       // ↓↓↓ 原有鉴权,原样保留 ↓↓↓
-      if (to.path === "/account/profile") {
+      if (to.path === "/profile") {
         const userStore = useUserStore();
         if (!userStore.isAuthed) await userStore.fetchMe();
         return userStore.isAuthed
           ? true
-          : "/account/login?redirect=/account/profile";
+          : {
+              path: "/account",
+              query: { mode: "login", redirect: "/profile" },
+            };
       }
     });
   },

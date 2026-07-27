@@ -39,7 +39,9 @@
 
 | 档 | 定位 | 现有成员 |
 |---|---|---|
-| `layout/` | **全站 chrome**(不对应 URL,被 `App.vue` 或多页装配) | `Nav` / `Footer` / `MottoHeader` / `SidebarLeft` / `SidebarRight` |
+| `layout/` | **全站 chrome / 公共页框** | `Nav` / `Footer` / `MottoHeader` / `SidebarLeft` / `SidebarRight` / **`PageFrame`** |
+
+> `layout/` 里有两类用法:① `Nav`/`Footer` 被 `App.vue` 全局装配(全站 chrome);② `PageFrame` 是**终端页主动 import 包裹**的公共页框(`.inner` + `MottoHeader` + `<slot/>`),终端页自己装配、不在 App 里。`SidebarLeft`/`SidebarRight` 则是 Home 专属侧栏。
 | `widgets/` | **可复用内容卡片**(独立语义 + 样式封装) | `AlbumSection` / `QrCard` / `QuoteCard` / `TimeProbe` / `PostCard` / `PinnedCard` / `UserPanel` / `AuthPanel` / `MusicPlayer` / `ProfileCard` / `TagCloud` / `UpdateLog` |
 | `common/` | **通用基础件**(跨域底层,不绑具体业务) | `GlassCard` / `Lightbox` |
 
@@ -62,22 +64,27 @@
 
 ---
 
-## 终端页写法约定(Album / Home / About 同款)
+## 终端页写法约定(Album / Home / About / Login 同款)
 
-终端页**内联页框**,不包 layout 壳:
+终端页用 **`PageFrame` 包裹**,不再手写 `div.inner` + `MottoHeader`:
 
 ```vue
 <template>
-  <div class="inner">
+  <PageFrame mottoDark="🌙 诗句" mottoLight="☀️ 诗句" :showBack="true">
     <h1 class="visually-hidden">页面名</h1>
-    <MottoHeader :showBack="true" />
     <!-- 内容:引入 widgets 组合,或直接写 -->
-  </div>
+  </PageFrame>
 </template>
+
+<script setup>
+import PageFrame from "@/components/layout/PageFrame.vue";
+// ...
+</script>
 ```
 
-- `inner` = 全局版心容器;`visually-hidden` = 给读屏/SEO 的 h1;`MottoHeader` = 诗句头(含返回键 + 昼夜开关)。
-- 内容靠引入 `widgets/` 卡片组合(Album 引入 `AlbumSection`+`Lightbox`,About 引入 `TimeProbe`+`QuoteCard`+`QrCard`+`UpdateLog`)。
+- `PageFrame` = 公共页框(`.inner` + `MottoHeader` + `<slot/>`),终端页主动 import 包裹。`mottoDark/mottoLight` 传专属诗句(不传走默认),`showBack` 控制返回键(首页传 false)。
+- **`PageFrame` 只管布局,不渲染 `h1`** —— h1 是页面**内容**,归各页自己写在 `<slot/>` 里(每页一个 `visually-hidden` h1,给读屏/SEO)。布局与内容职责分离,也避免双 h1。
+- 内容靠引入 `widgets/` 卡片组合(Album 引入 `AlbumSection`+`Lightbox`;About 引入 `ProfileCard`+`GlassCard`+`TimeProbe`+`QuoteCard`+`QrCard`+`UpdateLog`;Login 引入 `AuthPanel`)。
 
 ---
 
@@ -88,6 +95,8 @@
 3. **领域子目录自洽**:页面 + 共享资源(+ 若有父 layout)放一起,不散到根。
 4. **平级路由为主**:不滥用嵌套路由;只有同构领域页确实需要共享 chrome + 独立 URL 时才考虑。
 5. **全局样式克制**:`index.css` 只放真全站的;领域专属带前缀进领域 css,不往全局塞。
+6. **布局与内容职责分离**:`PageFrame`/`MottoHeader` 这类只管**壳与布局**,不渲染页面**内容**(尤其 h1)。h1 是每页独有的内容,归页面自己。组件不自作主张替页面决定标题语义。
+7. **widget 内的导航用 `router-link`,不用 `<div @click>`**:`PostCard` 整卡是 `<router-link :to>`(渲染 `<a href>`)——SEO 内链 + 键盘/读屏可达 + Ctrl 新标签。整卡跳转就该是链接,不是 JS 模拟。组件改一处,全站卡片自动变 `<a>`。
 
 ---
 

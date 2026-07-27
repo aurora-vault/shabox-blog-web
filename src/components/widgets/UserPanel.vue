@@ -6,7 +6,7 @@
     <!-- ▼ 未登录:引导卡 -->
     <div v-if="!userStore.isAuthed" class="panel-body guest">
       <p class="guest-hint">登录后可同步你的点赞、收藏与足迹</p>
-      <router-link :to="{ path: '/account/login' }" class="guest-cta">
+      <router-link :to="{ path: '/account', query: { mode: 'login' } }" class="guest-cta">
         登录 / 注册
       </router-link>
     </div>
@@ -34,7 +34,7 @@
 
       <div class="soon">点赞 · 收藏 · 通知 · 敬请期待</div>
 
-      <router-link :to="{ path: '/account/profile' }" class="to-profile">
+      <router-link :to="{ path: '/profile' }" class="to-profile">
         账户详情 →
       </router-link>
     </div>

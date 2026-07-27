@@ -9,6 +9,7 @@ import {
   accountRegister,
   accountReset,
   accountSendCode,
+  accountUpdateMe,
 } from "@/api/account.js";
 import { clearAccessToken, setAccessToken } from "../lib/userToken.js";
 
@@ -67,6 +68,13 @@ export const useUserStore = defineStore("user", () => {
     await accountReset({ email, code, newPassword });
   }
 
+  // 更新当前用户资料（目前仅 displayName；空串 → 清空）
+  async function updateProfile({ displayName }) {
+    const u = await accountUpdateMe({ displayName });
+    user.value = u;
+    return u;
+  }
+
   return {
     user,
     isAuthed,
@@ -77,5 +85,6 @@ export const useUserStore = defineStore("user", () => {
     fetchMe,
     forgot,
     reset,
+    updateProfile,
   };
 });

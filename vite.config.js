@@ -121,7 +121,9 @@ export default defineConfig({
 
       return [...staticPaths, ...dynamicPaths].filter(
         (path) =>
-          !path.startsWith("/admin") && !path.startsWith("/account"),
+          !path.startsWith("/admin") &&
+          !path.startsWith("/account") &&
+          !path.startsWith("/profile"),
       );
     },
     // 👇 2. 新增魔法：当 SSG 把所有 HTML 都生成完毕后，触发这个钩子
