@@ -28,45 +28,6 @@ export const routes = [
     component: () => import("@/views/lab/Pomodoro.vue"),
   },
 
-  // ===== admin 写作后台（SSG 不预渲染，客户端鉴权）=====
-  {
-    path: "/admin/login",
-    name: "AdminLogin",
-    component: () => import("@/views/admin/AdminLogin.vue"),
-  },
-  {
-    path: "/admin",
-    component: () => import("@/views/admin/AdminLayout.vue"),
-    children: [
-      { path: "", redirect: "/admin/posts" },
-      {
-        path: "posts",
-        name: "AdminPosts",
-        component: () => import("@/views/admin/AdminPostList.vue"),
-      },
-      {
-        path: "posts/new",
-        name: "AdminPostNew",
-        component: () => import("@/views/admin/AdminPostEditor.vue"),
-      },
-      {
-        path: "posts/:id",
-        name: "AdminPostEdit",
-        component: () => import("@/views/admin/AdminPostEditor.vue"),
-      },
-      {
-        path: "tags",
-        name: "AdminTags",
-        component: () => import("@/views/admin/AdminTagList.vue"),
-      },
-      {
-        path: "assets",
-        name: "AdminAssets",
-        component: () => import("@/views/admin/AdminAssetLibrary.vue"),
-      },
-    ],
-  },
-
   // ===== 访客账户（SSG 不预渲染，客户端鉴权）=====
   {
     path: "/account/login",

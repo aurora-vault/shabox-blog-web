@@ -1,9 +1,3 @@
-import {
-  clearAccessToken,
-  getAccessToken,
-  setAccessToken,
-} from "../lib/token.js";
-
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3001/v1";
 
@@ -81,14 +75,6 @@ export function createHttp({
     return data;
   };
 }
-
-// admin 默认实例：保持现有 `import { http } from "@/api/http.js"` 行为零改动
-export const http = createHttp({
-  getAccessToken,
-  setAccessToken,
-  clearAccessToken,
-  refreshPath: "/auth/refresh",
-});
 
 export async function publicHttp(path, options = {}) {
   const headers = {

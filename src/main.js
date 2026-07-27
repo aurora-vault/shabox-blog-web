@@ -6,7 +6,6 @@ import "prismjs/themes/prism-tomorrow.css"; // 经典的暗色极客代码主题
 
 import "@/assets/reset.css";
 import "@/assets/index.css";
-import { useAdminStore } from "@/store/admin.js";
 import { useUserStore } from "@/store/user.js";
 import { useBlogStore } from "@/store/blog.js"; // ← 新增 import
 
@@ -53,15 +52,6 @@ export const createApp = ViteSSG(
           ? true
           : "/account/login?redirect=/account/profile";
       }
-      if (!to.path.startsWith("/admin")) return true;
-      const admin = useAdminStore();
-      if (to.path === "/admin/login") {
-        return admin.isAuthed ? "/admin/posts" : true;
-      }
-      if (!admin.isAuthed) {
-        await admin.fetchMe();
-      }
-      return admin.isAuthed ? true : "/admin/login";
     });
   },
 );
